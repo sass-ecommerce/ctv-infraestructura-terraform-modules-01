@@ -4,20 +4,20 @@ Biblioteca de módulos Terraform reutilizables para la infraestructura AWS de Ch
 
 ## Módulos disponibles
 
-| Módulo | Recursos AWS |
-|---|---|
-| `modules/s3` | S3 bucket con SSE-AES256, bloqueo de acceso público y versionado |
-| `modules/cognito` | User Pool + App Client (auth por email, atributos `custom:id` y `custom:tenantId`) |
-| `modules/lambda` | Lambda function + CloudWatch Log Group + permiso de invocación |
-| `modules/api_gateway` | HTTP API v2 con integración Lambda proxy (ruta `$default`) |
-| `modules/dynamodb` | Tabla DynamoDB en modo `PAY_PER_REQUEST` |
-| `modules/iam` | IAM Role + Policy + attachment (1:1) |
-| `modules/secrets` | Secrets Manager + SSM Parameter Store (ruta `/<env>/<app>/<key>`) |
+| Módulo                | Recursos AWS                                                                       |
+| --------------------- | ---------------------------------------------------------------------------------- |
+| `modules/s3`          | S3 bucket con SSE-AES256, bloqueo de acceso público y versionado                   |
+| `modules/cognito`     | User Pool + App Client (auth por email, atributos `custom:id` y `custom:tenantId`) |
+| `modules/lambda`      | Lambda function + CloudWatch Log Group + permiso de invocación                     |
+| `modules/api_gateway` | HTTP API v2 con integración Lambda proxy (ruta `$default`)                         |
+| `modules/dynamodb`    | Tabla DynamoDB en modo `PAY_PER_REQUEST`                                           |
+| `modules/iam`         | IAM Role + Policy + attachment (1:1)                                               |
+| `modules/secrets`     | Secrets Manager + SSM Parameter Store (ruta `/<env>/<app>/<key>`)                  |
 
 ## Prerrequisitos
 
 - Terraform >= 1.3.0
-- AWS Provider >= 4.0, < 6.0
+- AWS Provider ~> 6.0
 - Credenciales AWS configuradas (`aws configure` o variables de entorno)
 
 ---
@@ -143,6 +143,7 @@ module "rol_lambda" {
 Soporta dos modos de despliegue: ZIP local o desde S3. Usa uno solo por función.
 
 **Desde un archivo ZIP local:**
+
 ```hcl
 module "lambda_productos" {
   source = "git::ssh://git@github.com/sass-ecommerce/ctv-infraestructura-terraform-modules-01.git//modules/lambda?ref=main"
@@ -169,6 +170,7 @@ module "lambda_productos" {
 ```
 
 **Desde S3:**
+
 ```hcl
 module "lambda_productos" {
   source = "git::ssh://git@github.com/sass-ecommerce/ctv-infraestructura-terraform-modules-01.git//modules/lambda?ref=main"
@@ -302,6 +304,7 @@ mi-servicio-infraestructura/
 ```
 
 **`providers.tf`**
+
 ```hcl
 terraform {
   required_version = ">= 1.3.0"
@@ -319,6 +322,7 @@ provider "aws" {
 ```
 
 **`main.tf`**
+
 ```hcl
 locals {
   env     = var.environment
@@ -397,6 +401,7 @@ module "lambda" {
 > `module.api` y `module.lambda` tienen una dependencia circular parcial (`execution_arn` del API hacia el Lambda, `invoke_arn` del Lambda hacia el API). Terraform resuelve esto correctamente porque cada uno referencia un output diferente del otro.
 
 **`outputs.tf`**
+
 ```hcl
 output "api_url" {
   value = module.api.stage_invoke_url
@@ -418,6 +423,7 @@ source = "git::ssh://git@github.com/sass-ecommerce/ctv-infraestructura-terraform
 ```
 
 Para crear un tag:
+
 ```bash
 git tag v1.0.0
 git push origin v1.0.0
