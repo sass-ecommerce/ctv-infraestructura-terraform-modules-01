@@ -50,8 +50,14 @@ resource "aws_cognito_user_pool" "this" {
   dynamic "lambda_config" {
     for_each = (var.pre_token_generation_lambda_arn != null || var.post_confirmation_lambda_arn != null) ? [1] : []
     content {
-      pre_token_generation = var.pre_token_generation_lambda_arn
-      post_confirmation    = var.post_confirmation_lambda_arn
+      dynamic "pre_token_generation_config" {
+        for_each = var.pre_token_generation_lambda_arn != null ? [1] : []
+        content {
+          lambda_arn     = var.pre_token_generation_lambda_arn
+          lambda_version = "V2_0"
+        }
+      }
+      post_confirmation = var.post_confirmation_lambda_arn
     }
   }
 
