@@ -68,12 +68,6 @@ variable "log_retention_days" {
   default     = 14
 }
 
-variable "api_gateway_execution_arn" {
-  type        = string
-  description = "API Gateway execution ARN to grant invoke permission (optional)"
-  default     = null
-}
-
 variable "tags" {
   type    = map(string)
   default = {}
