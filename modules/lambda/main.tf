@@ -27,3 +27,14 @@ resource "aws_lambda_function" "this" {
 
   depends_on = [aws_cloudwatch_log_group.this]
 }
+
+resource "aws_lambda_permission" "this" {
+  for_each = var.permissions
+
+  statement_id   = each.key
+  action         = each.value.action
+  function_name  = aws_lambda_function.this.function_name
+  principal      = each.value.principal
+  source_arn     = each.value.source_arn
+  source_account = each.value.source_account
+}

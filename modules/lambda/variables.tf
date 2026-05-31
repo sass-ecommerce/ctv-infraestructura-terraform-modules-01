@@ -68,6 +68,17 @@ variable "log_retention_days" {
   default     = 14
 }
 
+variable "permissions" {
+  type = map(object({
+    action         = string
+    principal      = string
+    source_arn     = optional(string)
+    source_account = optional(string)
+  }))
+  description = "Map of Lambda permission statements. Each map key becomes the statement_id."
+  default     = {}
+}
+
 variable "tags" {
   type    = map(string)
   default = {}
