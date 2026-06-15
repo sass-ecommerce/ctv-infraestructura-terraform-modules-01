@@ -47,20 +47,6 @@ resource "aws_cognito_user_pool" "this" {
     }
   }
 
-  dynamic "lambda_config" {
-    for_each = (var.pre_token_generation_lambda_arn != null || var.post_confirmation_lambda_arn != null) ? [1] : []
-    content {
-      dynamic "pre_token_generation_config" {
-        for_each = var.pre_token_generation_lambda_arn != null ? [1] : []
-        content {
-          lambda_arn     = var.pre_token_generation_lambda_arn
-          lambda_version = "V2_0"
-        }
-      }
-      post_confirmation = var.post_confirmation_lambda_arn
-    }
-  }
-
   account_recovery_setting {
     recovery_mechanism {
       name     = "verified_email"
@@ -69,26 +55,6 @@ resource "aws_cognito_user_pool" "this" {
   }
 
   tags = var.tags
-}
-
-resource "aws_lambda_permission" "cognito_pre_token" {
-  count = var.pre_token_generation_lambda_arn != null ? 1 : 0
-
-  statement_id  = "AllowCognitoInvoke"
-  action        = "lambda:InvokeFunction"
-  function_name = var.pre_token_generation_lambda_arn
-  principal     = "cognito-idp.amazonaws.com"
-  source_arn    = aws_cognito_user_pool.this.arn
-}
-
-resource "aws_lambda_permission" "cognito_post_confirmation" {
-  count = var.post_confirmation_lambda_arn != null ? 1 : 0
-
-  statement_id  = "AllowCognitoInvoke"
-  action        = "lambda:InvokeFunction"
-  function_name = var.post_confirmation_lambda_arn
-  principal     = "cognito-idp.amazonaws.com"
-  source_arn    = aws_cognito_user_pool.this.arn
 }
 
 resource "aws_cognito_user_pool_client" "this" {
